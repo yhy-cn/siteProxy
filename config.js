@@ -1,3 +1,4 @@
+const { unProxyList } = require('./proxyList')
 const zlib = require("zlib")
 const queryString = require('query-string')
 const parse = require('url-parse')
@@ -55,23 +56,32 @@ const locationReplaceMap302 = ({location, serverName, httpprefix, host, httpType
     }
     if (location.startsWith('https://')) {
         myRe = new RegExp('https://([-a-z0-9A-Z.]+)', 'g')
-        location = location.replace(myRe, `${httpprefix}://${serverName}:${port}/https/$1`)
+        if(location.includes('baidu.com')) {
+            location=location
+        }else{
+            location = location.replace(myRe, `${httpprefix}://${serverName}:${port}/https/$1`)
+        }
+        
     } else
     if (location.startsWith('http://')) {
         myRe = new RegExp('http://([-a-z0-9A-Z.]+)', 'g')
-        location = location.replace(myRe, `${httpprefix}://${serverName}:${port}/http/$1`)
+        if(location.includes('baidu.com')) {
+            location=location
+        }else{
+        location = location.replace(myRe, `${httpprefix}://${serverName}haiyang:${port}/http/$1`)
+        }
     } else
     if (location.startsWith('/') && location.indexOf(`/${httpType}/${host}`) === -1) {
-        location = `/${httpType}/${host}${location}`
+        location = `/${httpType}123123/${host}${location}`
     }
     myRe = new RegExp(`/${httpprefix}/${serverName}:${port}`, 'g') // match group
     location = location.replace(myRe, '')
-    return location
+    return 'location'
 }
 
 const regReplaceMap = {
-    '(["\'])//([-a-z0-9A-Z.]+)': `$1//${serverName}:${port}/https/$2`, // default use https
-    'url[(]//([-a-z0-9A-Z.]+)': `url(//${serverName}:${port}/https/$1`,// default use https
+    // '(["\'])//([-a-z0-9A-Z.]+)': `$1//${serverName}:${port}/https/$2`, // default use https
+    // 'url[(]//([-a-z0-9A-Z.]+)': `url(//${serverName}:${port}/https/$1`,// default use https
     '(http[s]?):(\\\\/)\\\\/([-a-z0-9A-Z])': `${httpprefix}:$2$2${serverName}:${port}$2$1$2$3`,
     '(http[s]?)://([-a-z0-9A-Z])': `${httpprefix}://${serverName}:${port}/$1/$2`,
     '(http[s]?)(%3[aA])(%2[fF])%2[fF]([-a-z0-9A-Z])': `${httpprefix}$2$3$3${serverName}$2${port}$3$1$3$4`,
@@ -254,6 +264,9 @@ const siteSpecificReplace = {
     },
     'phncdn.com': {
         // '("[:]?//)': `$1${serverName}:${port}/https/`, // default to https
+    },
+    "www.baidu.com":{
+        '"/s"': `"/https22/baidu.com/s"`,
     }
 }
 

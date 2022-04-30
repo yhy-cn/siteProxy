@@ -12,6 +12,7 @@ let proxy = Proxy({ ProxyMiddleware, blockedSites, urlModify, httpprefix, server
 const middle1 = (req, res, next) => {
     let timestr = new Date().toISOString()
     let myRe = new RegExp(`/http[s]?/${serverName}[0-9:]*?`, 'g') // match group
+    
     req.url = req.url.replace(myRe, '')
     if (req.url.length === 0) {
         req.url = '/'
